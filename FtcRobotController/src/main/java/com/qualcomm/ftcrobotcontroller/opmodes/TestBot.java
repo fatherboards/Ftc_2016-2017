@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 
 /**
  * Created by wyatt.ross on 8/24/16.
@@ -24,9 +25,10 @@ public class TestBot extends OpMode{
     DeviceInterfaceModule cdim;
     TouchSensor t;
     GyroSensor sensorGyro;
+    IrSeekerSensor irSeeker;
 
     //Global Variables
-    float hsvValues[] = {255,255,255};
+    float hsvValues[] = {0,0,0};
     int xVal, yVal, zVal = 0;
     int heading = 0;
 
@@ -50,6 +52,7 @@ public class TestBot extends OpMode{
         sensorGyro = hardwareMap.gyroSensor.get("gyro");
         motorRight = hardwareMap.dcMotor.get("motor_2");
         motorLeft = hardwareMap.dcMotor.get("motor_1");
+        irSeeker = hardwareMap.irSeekerSensor.get("ir");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
         colorSensor.enableLed(false);
     }
@@ -89,6 +92,12 @@ public class TestBot extends OpMode{
 
         //Touch Sensor Telemetry
         telemetry.addData("isPressed", String.valueOf(t.isPressed()));
+
+        //Ir Seeker Activity
+        double angle = irSeeker.getAngle();
+        double strength = irSeeker.getStrength();
+        telemetry.addData("angle", angle);
+        telemetry.addData("strength", strength);
     }
 
     double scaleInput(double dVal)  {
