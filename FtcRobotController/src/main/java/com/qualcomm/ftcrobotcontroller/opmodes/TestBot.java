@@ -23,7 +23,6 @@ public class TestBot extends OpMode{
     ColorSensor colorSensor;
     DeviceInterfaceModule cdim;
     TouchSensor t;
-    TouchSensor touchSensor;
     GyroSensor sensorGyro;
 
     //Global Variables
@@ -52,6 +51,7 @@ public class TestBot extends OpMode{
         motorRight = hardwareMap.dcMotor.get("motor_2");
         motorLeft = hardwareMap.dcMotor.get("motor_1");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
+        colorSensor.enableLed(false);
     }
 
     public void loop(){
@@ -65,7 +65,8 @@ public class TestBot extends OpMode{
         motorRight.setPower(right);
         motorLeft.setPower(left);
 
-        //Color Sensor Telemetry
+        //Color Sensor Activity
+        colorSensor.enableLed(true);
         float red = colorSensor.red();
         float blue = colorSensor.blue();
         float green = colorSensor.green();
@@ -87,7 +88,7 @@ public class TestBot extends OpMode{
         telemetry.addData("4. h", String.format("%03d", heading));
 
         //Touch Sensor Telemetry
-        telemetry.addData("isPressed", String.valueOf(touchSensor.isPressed()));
+        telemetry.addData("isPressed", String.valueOf(t.isPressed()));
     }
 
     double scaleInput(double dVal)  {
