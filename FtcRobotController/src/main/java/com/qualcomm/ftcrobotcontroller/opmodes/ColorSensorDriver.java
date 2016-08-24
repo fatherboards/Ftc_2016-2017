@@ -43,11 +43,10 @@ import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class ColorSensorDriver extends LinearOpMode {
-
+  //Lists devices and declares the device
   public enum ColorSensorDevice {ADAFRUIT, HITECHNIC_NXT, MODERN_ROBOTICS_I2C};
-
   public ColorSensorDevice device = ColorSensorDevice.MODERN_ROBOTICS_I2C;
-
+  //CDI and attached bjects declared
   ColorSensor colorSensor;
   DeviceInterfaceModule cdim;
   LED led;
@@ -55,16 +54,14 @@ public class ColorSensorDriver extends LinearOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {
+    //Maps devices to config file on driver station
     hardwareMap.logDevices();
     cdim = hardwareMap.deviceInterfaceModule.get("dim");
     colorSensor = hardwareMap.colorSensor.get("color");
     led = hardwareMap.led.get("led");
     t = hardwareMap.touchSensor.get("t");
-
     waitForStart();
-
     float hsvValues[] = {255,255,255};
-    final float values[] = hsvValues;
     final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.RelativeLayout);
     while (opModeIsActive()) {
       float red = colorSensor.red();
@@ -76,11 +73,6 @@ public class ColorSensorDriver extends LinearOpMode {
       telemetry.addData("Blue ", blue);
       telemetry.addData("Hue", hsvValues[0]);
       telemetry.addData("Clear", colorSensor.alpha());
-//      relativeLayout.post(new Runnable() {
-//        public void run() {
-//          relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-//        }
-//      });
     }
   }
 }
