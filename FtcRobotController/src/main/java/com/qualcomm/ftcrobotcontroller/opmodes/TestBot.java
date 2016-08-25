@@ -55,6 +55,7 @@ public class TestBot extends OpMode{
         irSeeker = hardwareMap.irSeekerSensor.get("ir");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
         colorSensor.enableLed(false);
+        //Allows robot to move
         new Thread() {
             public void run() {
                 while(true) {
@@ -69,43 +70,60 @@ public class TestBot extends OpMode{
                 }
             }
         }.start();
-    }
-
-    public void loop(){
-        //Allows robot to move
-
-
         //Color Sensor Activity
-        colorSensor.enableLed(true);
-        float red = colorSensor.red();
-        float blue = colorSensor.blue();
-        float green = colorSensor.green();
-        Color.RGBToHSV(colorSensor.red()*8, colorSensor.green()*8, colorSensor.blue()*8, hsvValues);
-        telemetry.addData("Red  ", red);
-        telemetry.addData("Green", green);
-        telemetry.addData("Blue ", blue);
-        telemetry.addData("Hue", hsvValues[0]);
-        telemetry.addData("Clear", colorSensor.alpha());
-
+        new Thread() {
+            public void run() {
+                while(true) {
+                    colorSensor.enableLed(true);
+                    float red = colorSensor.red();
+                    float blue = colorSensor.blue();
+                    float green = colorSensor.green();
+                    Color.RGBToHSV(colorSensor.red()*8, colorSensor.green()*8, colorSensor.blue()*8, hsvValues);
+                    telemetry.addData("Red  ", red);
+                    telemetry.addData("Green", green);
+                    telemetry.addData("Blue ", blue);
+                    telemetry.addData("Hue", hsvValues[0]);
+                    telemetry.addData("Clear", colorSensor.alpha());
+                }
+            }
+        }.start();
         //Gyro Sensor Telemetry
-        xVal = sensorGyro.rawX();
-        yVal = sensorGyro.rawY();
-        zVal = sensorGyro.rawZ();
-        heading = sensorGyro.getHeading();
-        telemetry.addData("1. x", String.format("%03d", xVal));
-        telemetry.addData("2. y", String.format("%03d", yVal));
-        telemetry.addData("3. z", String.format("%03d", zVal));
-        telemetry.addData("4. h", String.format("%03d", heading));
-
+        new Thread() {
+            public void run() {
+                while(true) {
+                    xVal = sensorGyro.rawX();
+                    yVal = sensorGyro.rawY();
+                    zVal = sensorGyro.rawZ();
+                    heading = sensorGyro.getHeading();
+                    telemetry.addData("1. x", String.format("%03d", xVal));
+                    telemetry.addData("2. y", String.format("%03d", yVal));
+                    telemetry.addData("3. z", String.format("%03d", zVal));
+                    telemetry.addData("4. h", String.format("%03d", heading));
+                }
+            }
+        }.start();
         //Touch Sensor Telemetry
-        telemetry.addData("isPressed", String.valueOf(t.isPressed()));
-
+        new Thread() {
+            public void run() {
+                while(true) {
+                    telemetry.addData("isPressed", String.valueOf(t.isPressed()));
+                }
+            }
+        }.start();
         //Ir Seeker Activity
-        double angle = irSeeker.getAngle();
-        double strength = irSeeker.getStrength();
-        telemetry.addData("angle", angle);
-        telemetry.addData("strength", strength);
+        new Thread() {
+            public void run() {
+                while(true) {
+                    double angle = irSeeker.getAngle();
+                    double strength = irSeeker.getStrength();
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("strength", strength);
+                }
+            }
+        }.start();
     }
+
+    public void loop(){}
 
     double scaleInput(double dVal)  {
         double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
