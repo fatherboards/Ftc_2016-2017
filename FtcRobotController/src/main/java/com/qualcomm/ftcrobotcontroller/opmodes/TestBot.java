@@ -55,18 +55,25 @@ public class TestBot extends OpMode{
         irSeeker = hardwareMap.irSeekerSensor.get("ir");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
         colorSensor.enableLed(false);
+        new Thread() {
+            public void run() {
+                while(true) {
+                    float left = -gamepad1.left_stick_y;
+                    float right = -gamepad1.right_stick_y;
+                    right = Range.clip(right, -1, 1);
+                    left = Range.clip(left, -1, 1);
+                    right = (float) scaleInput(right);
+                    left = (float) scaleInput(left);
+                    motorRight.setPower(right);
+                    motorLeft.setPower(left);
+                }
+            }
+        }.start();
     }
 
     public void loop(){
         //Allows robot to move
-        float left = -gamepad1.left_stick_y;
-        float right = -gamepad1.right_stick_y;
-        right = Range.clip(right, -1, 1);
-        left = Range.clip(left, -1, 1);
-        right = (float)scaleInput(right);
-        left =  (float)scaleInput(left);
-        motorRight.setPower(right);
-        motorLeft.setPower(left);
+
 
         //Color Sensor Activity
         colorSensor.enableLed(true);
