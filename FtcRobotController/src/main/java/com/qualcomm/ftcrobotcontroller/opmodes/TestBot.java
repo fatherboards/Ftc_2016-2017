@@ -136,6 +136,13 @@ public class TestBot extends OpMode{
                         }
                     }
                     //End accelleration measures
+
+                    if(right ==0){
+                        motorRight.setPower(0);
+                    }
+                    if(left ==0){
+                        motorLeft.setPower(0);
+                    }
                     rightPrev = right;
                     leftPrev = left;
                 }
