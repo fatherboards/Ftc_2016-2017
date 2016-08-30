@@ -27,7 +27,7 @@ public class TestBot extends OpMode{
     //CDI and attached objects declared
     ColorSensor colorSensor;
     I2cDevice range;
-    I2cDeviceReader rangeReader = new I2cDeviceReader(range, 0x28, 0x04, 2);
+    I2cDeviceReader rangeReader;
     DeviceInterfaceModule cdim;
     TouchSensor t;
     GyroSensor sensorGyro;
@@ -39,6 +39,8 @@ public class TestBot extends OpMode{
     float hsvValues[] = {0,0,0};
     int xVal, yVal, zVal = 0;
     int heading = 0;
+    double rightPrev;
+    double leftPrev;
 
     //Lists devices and declares the device
     public enum ColorSensorDevice {ADAFRUIT, HITECHNIC_NXT, MODERN_ROBOTICS_I2C};
@@ -64,6 +66,10 @@ public class TestBot extends OpMode{
         irSeeker = hardwareMap.irSeekerSensor.get("ir");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
         colorSensor.enableLed(false);
+
+        //initialization
+        rangeReader = new I2cDeviceReader(range, 0x28, 0x04, 2);
+
         //Allows robot to move
         Thread r = new Thread() {
             public void run() {
@@ -74,9 +80,64 @@ public class TestBot extends OpMode{
                     left = Range.clip(left, -1, 1);
                     right = (float) scaleInput(right);
                     left = (float) scaleInput(left);
-                    motorRight.setPower(right);
-                    motorLeft.setPower(left);
-
+                    //All of the nonsense conditionals bellow cause the robot to accellerate and decellerate rather than jumping quickly back and forth. This helps us to not destroy our parts
+                    if(right != rightPrev && left != leftPrev) {
+                        if(rightPrev < right && leftPrev < left) {
+                            for (double i = rightPrev, j = leftPrev; i < right && j < left; i += .05, j += .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                        else if(rightPrev < right && leftPrev > left){
+                            for (double i = rightPrev, j = leftPrev; i < right && j > left; i += .05, j -= .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                        else if(rightPrev > right && leftPrev > left){
+                            for (double i = rightPrev, j = leftPrev; i > right && j < left; i -= .05, j += .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                        else{
+                            for (double i = rightPrev, j = leftPrev; i > right && j > left; i -= .05, j -= .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                    }
+                    else if(right != rightPrev) {
+                        if(rightPrev > right) {
+                            for (double i = rightPrev; i > right; i -= .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(left);
+                            }
+                        }
+                        else{
+                            for (double i = rightPrev; i < right; i += .05) {
+                                motorRight.setPower(i);
+                                motorLeft.setPower(left);
+                            }
+                        }
+                    }
+                    else if(left != leftPrev) {
+                        if(leftPrev > left) {
+                            for (double j = leftPrev; j > left; j -= .05) {
+                                motorRight.setPower(right);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                        else {
+                            for (double j = leftPrev; j < left; j += .05) {
+                                motorRight.setPower(right);
+                                motorLeft.setPower(j);
+                            }
+                        }
+                    }
+                    //End accelleration measures
+                    rightPrev = right;
+                    leftPrev = left;
                 }
             }
         };
@@ -90,11 +151,6 @@ public class TestBot extends OpMode{
                     double strength = irSeeker.getStrength();
                     telemetry.addData("angle", angle);
                     telemetry.addData("strength", strength);
-
-                    //range sensor
-                    rangeReadings = rangeReader.getReadBuffer();
-                    telemetry.addData("US", (rangeReadings[0] & 0xFF));
-                    telemetry.addData("ODS", (rangeReadings[1] & 0xFF));
 
                     //touch sensor
                     telemetry.addData("isPressed", String.valueOf(t.isPressed()));
@@ -119,7 +175,12 @@ public class TestBot extends OpMode{
         r.start();
     }
 
-    public void loop(){}
+    public void loop(){
+        //range sensor
+        rangeReadings = rangeReader.getReadBuffer();
+        telemetry.addData("US", (rangeReadings[0] & 0xFF));
+        telemetry.addData("ODS", (rangeReadings[1] & 0xFF));
+    }
 
     public void stop(){
         //Allows us to stop the robot with the stop button, canceling the run without this will not stop the other threads
