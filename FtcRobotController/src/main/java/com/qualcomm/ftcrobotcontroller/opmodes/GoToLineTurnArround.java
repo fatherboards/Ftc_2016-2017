@@ -71,6 +71,7 @@ public class GoToLineTurnArround extends  OpMode {
                 while(motorLeft.getCurrentPosition() < endEncodersLeft) {
                     telemetry.addData("encodersLeft",-motorLeft.getCurrentPosition()-endEncodersLeft);
                     telemetry.addData("encodersRight",motorRight.getCurrentPosition()-endEncodersRight);
+                    gyro = sensorGyro.getHeading();
                     while(sensorGyro.getHeading() < gyro - 10) {
                         motorRight.setPower(-.1);
                         motorLeft.setPower(-.1);
@@ -79,7 +80,6 @@ public class GoToLineTurnArround extends  OpMode {
                         motorRight.setPower(.1);
                         motorLeft.setPower(.1);
                     }
-                    gyro = sensorGyro.getHeading();
                     motorRight.setPower(-.1);
                     motorLeft.setPower(.1);
                     heading = sensorGyro.getHeading();
