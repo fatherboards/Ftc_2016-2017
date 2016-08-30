@@ -122,6 +122,7 @@ public class TestBot extends OpMode{
     public void loop(){}
 
     public void stop(){
+        //Allows us to stop the robot with the stop button, canceling the run without this will not stop the other threads
         for(Thread t : runningThreads) {
             t.interrupt();
         }
