@@ -66,26 +66,24 @@ public class GoToLineTurnArround extends  OpMode {
                 int endEncodersLeft = encoderTicks+currentEncodersLeft;
                 motorLeft.setTargetPosition(endEncodersLeft);
                 motorRight.setTargetPosition(endEncodersRight);
-                while(currentEncodersRight > endEncodersRight) {
-                    int startGyro = sensorGyro.getHeading();
-                    telemetry.addData("encodersLeft",motorLeft.getCurrentPosition()-endEncodersLeft);
+                int startGyro = sensorGyro.getHeading();
+                int gyro = sensorGyro.getHeading();
+                while(motorLeft.getCurrentPosition() < endEncodersLeft) {
+                    telemetry.addData("encodersLeft",-motorLeft.getCurrentPosition()-endEncodersLeft);
                     telemetry.addData("encodersRight",motorRight.getCurrentPosition()-endEncodersRight);
-                    if(sensorGyro.getHeading() < startGyro-5) {
-                        while (sensorGyro.getHeading() < startGyro - 5) {
-                            motorRight.setPower(-.1);
-                            motorLeft.setPower(.05);
-                        }
+                    while(sensorGyro.getHeading() < gyro - 10) {
+                        motorRight.setPower(-.1);
+                        motorLeft.setPower(-.1);
                     }
-                    if(sensorGyro.getHeading() < startGyro+5) {
-                        while (sensorGyro.getHeading() > startGyro + 5) {
-                            motorRight.setPower(-.05);
-                            motorLeft.setPower(.1);
-                        }
+                    while(sensorGyro.getHeading() > gyro + 10) {
+                        motorRight.setPower(.1);
+                        motorLeft.setPower(.1);
                     }
+                    gyro = sensorGyro.getHeading();
                     motorRight.setPower(-.1);
                     motorLeft.setPower(.1);
                     heading = sensorGyro.getHeading();
-                    telemetry.addData("4. h", String.format("%03d", heading));
+                    telemetry.addData("4. h", String.format("%03d", gyro - startGyro));
                 }
                 motorLeft.setPower(0);
                 motorRight.setPower(0);
