@@ -70,68 +70,62 @@ public class TestBot extends OpMode{
         //initialization
         rangeReader = new I2cDeviceReader(range, 0x28, 0x04, 2);
 
-        //Allows robot to move
-        Thread r = new Thread() {
+        //Left Joystick Thread
+        Thread l = new Thread(){
             public void run() {
                 while (true) {
                     float left = -gamepad1.left_stick_y;
-                    float right = -gamepad1.right_stick_y;
-                    right = Range.clip(right, -1, 1);
                     left = Range.clip(left, -1, 1);
-                    right = (float) scaleInput(right);
                     left = (float) scaleInput(left);
-                    //All of the nonsense conditionals bellow cause the robot to accellerate and decellerate rather than jumping quickly back and forth. This helps us to not destroy our parts
-                    if(right != rightPrev && left != leftPrev) {
-                        if(rightPrev < right && leftPrev < left) {
-                            for (double i = rightPrev, j = leftPrev; i < right && j < left; i += .05, j += .05) {
-                                motorRight.setPower(i);
+                    if(left != leftPrev) {
+                        if(leftPrev > left) {
+                            for (double j = leftPrev; j > left; j -= .05) {
                                 motorLeft.setPower(j);
+                                if(left != gamepad1.left_stick_y){
+                                    break;
+                                }
                             }
                         }
-                        else if(rightPrev < right && leftPrev > left){
-                            for (double i = rightPrev, j = leftPrev; i < right && j > left; i += .05, j -= .05) {
-                                motorRight.setPower(i);
+                        else {
+                            for (double j = leftPrev; j < left; j += .05) {
                                 motorLeft.setPower(j);
-                            }
-                        }
-                        else if(rightPrev > right && leftPrev > left){
-                            for (double i = rightPrev, j = leftPrev; i > right && j < left; i -= .05, j += .05) {
-                                motorRight.setPower(i);
-                                motorLeft.setPower(j);
-                            }
-                        }
-                        else{
-                            for (double i = rightPrev, j = leftPrev; i > right && j > left; i -= .05, j -= .05) {
-                                motorRight.setPower(i);
-                                motorLeft.setPower(j);
+                                if(left != gamepad1.left_stick_y){
+                                    break;
+                                }
                             }
                         }
                     }
-                    else if(right != rightPrev) {
+                    if(left == 0){
+                        motorLeft.setPower(0);
+                    }
+                    leftPrev = left;
+                }
+            }
+        };
+
+        //Right Joystick Thread
+        Thread r = new Thread() {
+            public void run() {
+                while (true) {
+                    float right = -gamepad1.right_stick_y;
+                    right = Range.clip(right, -1, 1);
+                    right = (float) scaleInput(right);
+                    //All of the nonsense conditionals bellow cause the robot to accellerate and decellerate rather than jumping quickly back and forth. This helps us to not destroy our parts
+                    if(right != rightPrev) {
                         if(rightPrev > right) {
                             for (double i = rightPrev; i > right; i -= .05) {
                                 motorRight.setPower(i);
-                                motorLeft.setPower(left);
+                                if(right != -gamepad1.right_stick_y){
+                                    break;
+                                }
                             }
                         }
                         else{
                             for (double i = rightPrev; i < right; i += .05) {
                                 motorRight.setPower(i);
-                                motorLeft.setPower(left);
-                            }
-                        }
-                    }
-                    else if(left != leftPrev) {
-                        if(leftPrev > left) {
-                            for (double j = leftPrev; j > left; j -= .05) {
-                                motorRight.setPower(right);
-                                motorLeft.setPower(j);
-                            }
-                        }
-                        else {
-                            for (double j = leftPrev; j < left; j += .05) {
-                                motorRight.setPower(right);
-                                motorLeft.setPower(j);
+                                if(right != -gamepad1.right_stick_y){
+                                    break;
+                                }
                             }
                         }
                     }
@@ -140,11 +134,8 @@ public class TestBot extends OpMode{
                     if(right ==0){
                         motorRight.setPower(0);
                     }
-                    if(left ==0){
-                        motorLeft.setPower(0);
-                    }
                     rightPrev = right;
-                    leftPrev = left;
+
                 }
             }
         };
@@ -176,14 +167,18 @@ public class TestBot extends OpMode{
                 }
             }
         };
+
+        //Start Activities
         runningThreads.add(h);
         h.start();
         runningThreads.add(r);
         r.start();
+        runningThreads.add(l);
+        l.start();
     }
 
     public void loop(){
-        //range sensor
+        //range sensor (Cannot put into sensor thread, it causes a crash for some reason)
         rangeReadings = rangeReader.getReadBuffer();
         telemetry.addData("US", (rangeReadings[0] & 0xFF));
         telemetry.addData("ODS", (rangeReadings[1] & 0xFF));
