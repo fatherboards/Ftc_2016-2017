@@ -1,28 +1,25 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
-import android.graphics.Color;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.ftcrobotcontroller.Robot_API_Abstraction;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceReader;
-
 import java.util.ArrayList;
 
 /**
  * Created by wyatt.ross on 8/24/16.
  */
 
-public class TestBot extends OpMode{
+public class TestBot extends Robot_API_Abstraction{
 
     //declares motors
     DcMotor motorRight;
     DcMotor motorLeft;
+    ArrayList<DcMotor> DcMotorList = new ArrayList<DcMotor>();
 
     //CDI and attached objects declared
     ColorSensor colorSensor;
@@ -36,11 +33,6 @@ public class TestBot extends OpMode{
     //Global Variables
     ArrayList<Thread> runningThreads = new ArrayList<Thread>();
     byte rangeReadings[];
-    float hsvValues[] = {0,0,0};
-    int xVal, yVal, zVal = 0;
-    int heading = 0;
-    double rightPrev;
-    double leftPrev;
 
     //Lists devices and declares the device
     public enum ColorSensorDevice {ADAFRUIT, HITECHNIC_NXT, MODERN_ROBOTICS_I2C};
@@ -70,71 +62,19 @@ public class TestBot extends OpMode{
         //initialization
         rangeReader = new I2cDeviceReader(range, 0x28, 0x04, 2);
 
-        //Left Joystick Thread
-        Thread l = new Thread(){
-            public void run() {
-                while (true) {
-                    float left = -gamepad1.left_stick_y;
-                    left = Range.clip(left, -1, 1);
-                    left = (float) scaleInput(left);
-                    if(left != leftPrev) {
-                        if(leftPrev > left) {
-                            for (double j = leftPrev; j > left; j -= .05) {
-                                motorLeft.setPower(j);
-                                if(left != gamepad1.left_stick_y){
-                                    break;
-                                }
-                            }
-                        }
-                        else {
-                            for (double j = leftPrev; j < left; j += .05) {
-                                motorLeft.setPower(j);
-                                if(left != gamepad1.left_stick_y){
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if(left == 0){
-                        motorLeft.setPower(0);
-                    }
-                    leftPrev = left;
-                }
-            }
-        };
+        DcMotorList.add(motorRight);
+        DcMotorList.add(motorLeft);
 
-        //Right Joystick Thread
+        //Motor Thread
         Thread r = new Thread() {
             public void run() {
                 while (true) {
-                    float right = -gamepad1.right_stick_y;
-                    right = Range.clip(right, -1, 1);
-                    right = (float) scaleInput(right);
-                    //All of the nonsense conditionals bellow cause the robot to accellerate and decellerate rather than jumping quickly back and forth. This helps us to not destroy our parts
-                    if(right != rightPrev) {
-                        if(rightPrev > right) {
-                            for (double i = rightPrev; i > right; i -= .05) {
-                                motorRight.setPower(i);
-                                if(right != -gamepad1.right_stick_y){
-                                    break;
-                                }
-                            }
-                        }
-                        else{
-                            for (double i = rightPrev; i < right; i += .05) {
-                                motorRight.setPower(i);
-                                if(right != -gamepad1.right_stick_y){
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    //End accelleration measures
-
-                    if(right ==0){
-                        motorRight.setPower(0);
-                    }
-                    rightPrev = right;
+                    Float right = -gamepad1.right_stick_y;
+                    Float left = gamepad1.left_stick_y;
+                    ArrayList<Float> motorPowerList = new ArrayList<Float>();
+                    motorPowerList.add(right);
+                    motorPowerList.add(left);
+                    setMotorsPower(DcMotorList, motorPowerList);
 
                 }
             }
@@ -145,25 +85,16 @@ public class TestBot extends OpMode{
             public void run() {
                 while(true) {
                     //ir seeker
-                    double angle = irSeeker.getAngle();
-                    double strength = irSeeker.getStrength();
-                    telemetry.addData("angle", angle);
-                    telemetry.addData("strength", strength);
+                    IrSeeker(irSeeker, "Angle", "Power");
 
                     //touch sensor
-                    telemetry.addData("isPressed", String.valueOf(t.isPressed()));
+                    TouchSensorData(t, "TouchSensor");
+
+                    //gyro sensor
+                    GyroData(sensorGyro, "heading");
 
                     //color sensor
-                    colorSensor.enableLed(true);
-                    float red = colorSensor.red();
-                    float blue = colorSensor.blue();
-                    float green = colorSensor.green();
-                    Color.RGBToHSV(colorSensor.red()*8, colorSensor.green()*8, colorSensor.blue()*8, hsvValues);
-                    telemetry.addData("Red  ", red);
-                    telemetry.addData("Green", green);
-                    telemetry.addData("Blue ", blue);
-                    telemetry.addData("Hue", hsvValues[0]);
-                    telemetry.addData("Clear", colorSensor.alpha());
+                    ColorSensorData(colorSensor);
                 }
             }
         };
@@ -173,15 +104,11 @@ public class TestBot extends OpMode{
         h.start();
         runningThreads.add(r);
         r.start();
-        runningThreads.add(l);
-        l.start();
     }
 
     public void loop(){
         //range sensor (Cannot put into sensor thread, it causes a crash for some reason)
-        rangeReadings = rangeReader.getReadBuffer();
-        telemetry.addData("US", (rangeReadings[0] & 0xFF));
-        telemetry.addData("ODS", (rangeReadings[1] & 0xFF));
+        RangeSensorActivity(rangeReader, rangeReadings, "ultraSonicDistance", "opticalDistance");
     }
 
     public void stop(){
@@ -189,24 +116,5 @@ public class TestBot extends OpMode{
         for(Thread t : runningThreads) {
             t.interrupt();
         }
-    }
-
-    double scaleInput(double dVal)  {
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
-            int index = (int) (dVal * 16.0);
-        if (index < 0) {
-            index = -index;
-        }
-        if (index > 16) {
-            index = 16;
-        }
-        double dScale = 0.0;
-        if (dVal < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-        return dScale;
     }
 }
