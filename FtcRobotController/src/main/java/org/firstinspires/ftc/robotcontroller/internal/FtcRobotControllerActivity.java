@@ -38,6 +38,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
@@ -45,6 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -90,15 +92,45 @@ import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
 import org.firstinspires.ftc.robotcore.internal.AppUtil;
 import org.firstinspires.inspection.RcInspectionActivity;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class FtcRobotControllerActivity extends Activity {
+public class FtcRobotControllerActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
 
   public static final String TAG = "RCActivity";
-
+  CameraBridgeViewBase mCameraBridgeViewBase;
+  public static Mat curFrame;
+  private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+    @Override
+    public void onManagerConnected(int status) {
+      switch (status) {
+        case LoaderCallbackInterface.SUCCESS:
+        {
+          Log.i("ocv", "OpenCV loaded successfully");
+          doOpenCV();
+        } break;
+        default:
+        {
+          super.onManagerConnected(status);
+        } break;
+      }
+    }
+  };
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
   private static final boolean USE_DEVICE_EMULATION = false;
   private static final int NUM_GAMEPADS = 2;
@@ -112,7 +144,6 @@ public class FtcRobotControllerActivity extends Activity {
 
   protected UpdateUI.Callback callback;
   protected Context context;
-  public static Activity activity;
   protected Utility utility;
   protected AppUtil appUtil = AppUtil.getInstance();
 
@@ -134,6 +165,65 @@ public class FtcRobotControllerActivity extends Activity {
 
   protected FtcEventLoop eventLoop;
   protected Queue<UsbDevice> receivedUsbAttachmentNotifications;
+
+  @Override
+  public void onCameraViewStarted(int width, int height) {
+    curFrame = new Mat();
+    Log.i("ocv","STARTED");
+  }
+
+  @Override
+  public void onCameraViewStopped() {
+
+  }
+
+  @Override
+  public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+    if(textOpMode.getText().toString().equals("Op Mode: Opencv: Zipper's first opencv test") && textRobotStatus.getText().toString().equals("Robot Status: running")) {
+      curFrame = inputFrame.rgba();
+      Log.i("Loop", "PROCESSING");
+      CascadeClassifier temp = new CascadeClassifier();
+      MatOfRect rectsAroundObjs = new MatOfRect();
+      temp.detectMultiScale(curFrame,rectsAroundObjs);
+      Rect[] objs = rectsAroundObjs.toArray();
+      for(int i = 0; i < objs.length; i++) Core.rectangle(curFrame,objs[i].tl(),objs[i].br(),new Scalar(255,0,0));
+//      Mat grayed = new Mat();
+//      Mat canned = new Mat();
+//      Mat threshed = new Mat();
+//      ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//      Imgproc.cvtColor(curFrame, grayed, Imgproc.COLOR_BGR2GRAY);
+//      Imgproc.Canny(grayed, canned, 90, 400);
+//      Imgproc.threshold(canned, threshed, 127, 127, Imgproc.THRESH_BINARY);
+//      Imgproc.findContours(threshed, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+//      Imgproc.drawContours(curFrame, contours, -1, new Scalar(255,0,0), 3);
+      return curFrame;
+    }
+
+    else {
+      curFrame = inputFrame.gray();
+      return curFrame;
+    }
+  }
+  public void writeBitmap(Mat cur,String filename) {
+    Bitmap save = Bitmap.createBitmap(curFrame.width(),curFrame.height(), Bitmap.Config.RGB_565);
+    Utils.matToBitmap(cur,save);
+    FileOutputStream out = null;
+    try {
+      out = new FileOutputStream(filename);
+      save.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+      // PNG is a lossless format, the compression factor (100) is ignored
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (out != null) {
+          out.close();
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
   protected class RobotRestarter implements Restarter {
 
@@ -192,18 +282,22 @@ public class FtcRobotControllerActivity extends Activity {
     }
   }
 
+  public void doOpenCV() {
+    mCameraBridgeViewBase = (CameraBridgeViewBase) findViewById(R.id.javaCameraView);
+    mCameraBridgeViewBase.setCvCameraViewListener(this);
+    mCameraBridgeViewBase.setVisibility(View.VISIBLE);
+    mCameraBridgeViewBase.enableView();
+  }
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    RobotLog.vv(TAG, "onCreate()");
-
-    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<UsbDevice>();
-    eventLoop = null;
-
     setContentView(R.layout.activity_ftc_controller);
 
+
+    RobotLog.vv(TAG, "onCreate()");
+    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<UsbDevice>();
+    eventLoop = null;
     context = this;
-    activity = this;
     utility = new Utility(this);
     appUtil.setThisApp(new PeerAppRobotController(context));
 
@@ -298,6 +392,7 @@ public class FtcRobotControllerActivity extends Activity {
   protected void onResume() {
     super.onResume();
     RobotLog.vv(TAG, "onResume()");
+    OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_11, this, mLoaderCallback);
     readNetworkType(NETWORK_TYPE_FILENAME);
   }
 
