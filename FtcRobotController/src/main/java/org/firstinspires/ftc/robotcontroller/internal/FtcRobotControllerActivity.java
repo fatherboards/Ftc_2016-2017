@@ -97,12 +97,7 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -179,30 +174,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
   @Override
   public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-    if(textOpMode.getText().toString().equals("Op Mode: Opencv: Zipper's first opencv test") && textRobotStatus.getText().toString().equals("Robot Status: running")) {
-      curFrame = inputFrame.rgba();
-      Log.i("Loop", "PROCESSING");
-      CascadeClassifier temp = new CascadeClassifier();
-      MatOfRect rectsAroundObjs = new MatOfRect();
-      temp.detectMultiScale(curFrame,rectsAroundObjs);
-      Rect[] objs = rectsAroundObjs.toArray();
-      for(int i = 0; i < objs.length; i++) Core.rectangle(curFrame,objs[i].tl(),objs[i].br(),new Scalar(255,0,0));
-//      Mat grayed = new Mat();
-//      Mat canned = new Mat();
-//      Mat threshed = new Mat();
-//      ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-//      Imgproc.cvtColor(curFrame, grayed, Imgproc.COLOR_BGR2GRAY);
-//      Imgproc.Canny(grayed, canned, 90, 400);
-//      Imgproc.threshold(canned, threshed, 127, 127, Imgproc.THRESH_BINARY);
-//      Imgproc.findContours(threshed, contours, new Mat(), Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-//      Imgproc.drawContours(curFrame, contours, -1, new Scalar(255,0,0), 3);
-      return curFrame;
-    }
-
-    else {
-      curFrame = inputFrame.gray();
-      return curFrame;
-    }
+    return inputFrame.rgba();
   }
   public void writeBitmap(Mat cur,String filename) {
     Bitmap save = Bitmap.createBitmap(curFrame.width(),curFrame.height(), Bitmap.Config.RGB_565);
