@@ -1,10 +1,16 @@
+<<<<<<< HEAD
 import java.util.regex.Pattern
 
+=======
+>>>>>>> origin/zipper-imaging
 //
 // build.gradle in FtcRobotController
 //
 apply plugin: 'com.android.library'
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/zipper-imaging
 android {
 
     defaultConfig {
@@ -19,11 +25,22 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/zipper-imaging
 repositories {
     flatDir {
         dirs '../libs'
     }
 }
+<<<<<<< HEAD
 
 apply from: 'build.release.gradle'
+=======
+apply from: 'build.release.gradle'
+
+dependencies {
+    compile project(':opencv-java')
+}
+>>>>>>> origin/zipper-imaging

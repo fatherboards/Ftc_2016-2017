@@ -1,2 +1,8 @@
 include ':FtcRobotController'
+<<<<<<< HEAD
 include ':TeamCode'
+=======
+include ':TeamCode'
+include ':opencv-java'
+include ':ftc-visionlib'
+>>>>>>> origin/zipper-imaging

@@ -33,6 +33,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
+<<<<<<< HEAD
+=======
+              xmlns:opencv="http://schemas.android.com/apk/res-auto"
+>>>>>>> origin/zipper-imaging
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               tools:context="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
@@ -81,7 +85,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </RelativeLayout>
   <!-- end of black bar -->
+<<<<<<< HEAD
 
+=======
+  <org.opencv.android.JavaCameraView
+      android:layout_width="fill_parent"
+      android:layout_height="150dp"
+      android:id="@+id/javaCameraView"
+      opencv:show_fps="true"
+      opencv:camera_id="any"
+      />
+>>>>>>> origin/zipper-imaging
   <include layout="@layout/header"
            android:id="@+id/included_header"/>
 
@@ -182,4 +196,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:layout_width="1dp"
     android:layout_height="1dp" />
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/zipper-imaging
 </LinearLayout>

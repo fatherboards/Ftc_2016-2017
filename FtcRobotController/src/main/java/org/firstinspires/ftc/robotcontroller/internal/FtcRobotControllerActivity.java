@@ -38,6 +38,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+<<<<<<< HEAD
+=======
+import android.graphics.Bitmap;
+>>>>>>> origin/zipper-imaging
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
@@ -45,6 +49,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+<<<<<<< HEAD
+=======
+import android.util.Log;
+>>>>>>> origin/zipper-imaging
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -69,7 +77,10 @@ import com.qualcomm.ftccommon.FtcRobotControllerSettingsActivity;
 import com.qualcomm.ftccommon.LaunchActivityConstantsList;
 import com.qualcomm.ftccommon.ProgrammingModeController;
 import com.qualcomm.ftccommon.Restarter;
+<<<<<<< HEAD
 import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
+=======
+>>>>>>> origin/zipper-imaging
 import com.qualcomm.ftccommon.UpdateUI;
 import com.qualcomm.ftccommon.configuration.EditParameters;
 import com.qualcomm.ftccommon.configuration.FtcLoadFileActivity;
@@ -88,6 +99,7 @@ import com.qualcomm.robotcore.wifi.NetworkConnectionFactory;
 import com.qualcomm.robotcore.wifi.NetworkType;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
+<<<<<<< HEAD
 import org.firstinspires.ftc.robotcore.internal.AppUtil;
 import org.firstinspires.inspection.RcInspectionActivity;
 
@@ -99,6 +111,45 @@ public class FtcRobotControllerActivity extends Activity {
 
   public static final String TAG = "RCActivity";
 
+=======
+import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
+import org.firstinspires.ftc.robotcore.internal.AppUtil;
+import org.firstinspires.inspection.RcInspectionActivity;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+public class FtcRobotControllerActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
+
+  public static final String TAG = "RCActivity";
+  CameraBridgeViewBase mCameraBridgeViewBase;
+  public static Mat curFrame;
+  private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+    @Override
+    public void onManagerConnected(int status) {
+      switch (status) {
+        case LoaderCallbackInterface.SUCCESS:
+        {
+          Log.i("ocv", "OpenCV loaded successfully");
+          doOpenCV();
+        } break;
+        default:
+        {
+          super.onManagerConnected(status);
+        } break;
+      }
+    }
+  };
+>>>>>>> origin/zipper-imaging
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
   private static final boolean USE_DEVICE_EMULATION = false;
   private static final int NUM_GAMEPADS = 2;
@@ -134,6 +185,45 @@ public class FtcRobotControllerActivity extends Activity {
   protected FtcEventLoop eventLoop;
   protected Queue<UsbDevice> receivedUsbAttachmentNotifications;
 
+<<<<<<< HEAD
+=======
+  @Override
+  public void onCameraViewStarted(int width, int height) {
+    curFrame = new Mat();
+    Log.i("ocv","STARTED");
+  }
+
+  @Override
+  public void onCameraViewStopped() {
+
+  }
+
+  @Override
+  public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+    return inputFrame.rgba();
+  }
+  public void writeBitmap(Mat cur,String filename) {
+    Bitmap save = Bitmap.createBitmap(curFrame.width(),curFrame.height(), Bitmap.Config.RGB_565);
+    Utils.matToBitmap(cur,save);
+    FileOutputStream out = null;
+    try {
+      out = new FileOutputStream(filename);
+      save.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+      // PNG is a lossless format, the compression factor (100) is ignored
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (out != null) {
+          out.close();
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+>>>>>>> origin/zipper-imaging
   protected class RobotRestarter implements Restarter {
 
     public void requestRestart() {
@@ -191,6 +281,7 @@ public class FtcRobotControllerActivity extends Activity {
     }
   }
 
+<<<<<<< HEAD
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -201,6 +292,23 @@ public class FtcRobotControllerActivity extends Activity {
 
     setContentView(R.layout.activity_ftc_controller);
 
+=======
+  public void doOpenCV() {
+    mCameraBridgeViewBase = (CameraBridgeViewBase) findViewById(R.id.javaCameraView);
+    mCameraBridgeViewBase.setCvCameraViewListener(this);
+    mCameraBridgeViewBase.setVisibility(View.VISIBLE);
+    mCameraBridgeViewBase.enableView();
+  }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_ftc_controller);
+
+
+    RobotLog.vv(TAG, "onCreate()");
+    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<UsbDevice>();
+    eventLoop = null;
+>>>>>>> origin/zipper-imaging
     context = this;
     utility = new Utility(this);
     appUtil.setThisApp(new PeerAppRobotController(context));
@@ -296,6 +404,10 @@ public class FtcRobotControllerActivity extends Activity {
   protected void onResume() {
     super.onResume();
     RobotLog.vv(TAG, "onResume()");
+<<<<<<< HEAD
+=======
+    OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_11, this, mLoaderCallback);
+>>>>>>> origin/zipper-imaging
     readNetworkType(NETWORK_TYPE_FILENAME);
   }
 

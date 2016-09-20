@@ -13,7 +13,12 @@
 
     <activity
       android:name="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
+<<<<<<< HEAD
       android:configChanges="orientation|screenSize"
+=======
+        android:screenOrientation="landscape"
+        android:configChanges="orientation|keyboardHidden"
+>>>>>>> origin/zipper-imaging
       android:label="@string/app_name"
       android:launchMode="singleTask" >
 
@@ -36,4 +41,16 @@
       android:enabled="true" />
 
   </application>
+<<<<<<< HEAD
+=======
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+  <uses-feature android:name="android.hardware.camera"/>
+  <uses-feature android:name="android.hardware.camera.autofocus"/>
+  <uses-feature android:name="android.hardware.camera.front"/>
+  <uses-feature android:name="android.hardware.camera.front.autofocus"/>
+
+>>>>>>> origin/zipper-imaging
 </manifest>
