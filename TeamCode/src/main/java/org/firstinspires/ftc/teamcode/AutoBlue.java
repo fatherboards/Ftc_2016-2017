@@ -175,7 +175,7 @@ public class AutoBlue extends LinearOpMode{
                 left(.21);
             }
             telemetry();
-            autoBeaconSlider.setPower(getPowerDist()-.2);
+            autoBeaconSlider.setPower(getPowerDist());
             idle();
         }
         stopAll();
@@ -309,32 +309,25 @@ public class AutoBlue extends LinearOpMode{
             dist = cmFront;
         }
         double beaconDist = dist-4;
-        double pow = beaconDist*(1.5/18) - .5;
+        double pow = beaconDist*(.36/9);
         return pow;
     }
     public void doBeacon(boolean isReversed) throws InterruptedException{
         runtime.reset();
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals("blue")) {
             if(isReversed){
-                forward(-.125);
+                forward(-.1);
             }
             else{
-                forward(.125);
+                forward(.1);
             }
-            autoBeaconSlider.setPower(getPowerDist()-.2);
+            autoBeaconSlider.setPower(getPowerDist()-.05);
             idle();
         }
         stopAll();
-        if(isReversed) {
-            encoderDrive(.15, .15, 60, 60, 5);
-        }
-        else{
-            encoderDrive(-.15, -.15, 60, 60, 5);
-        }
-        stopAll();
-        autoBeaconSlider.setPower(getPowerDist()+.3);
-        sleep(3500);
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist()+.4);
+        sleep(1000);
+        autoBeaconSlider.setPower(getPowerDist()-.05);
         sleep(650);
     }
 
@@ -352,25 +345,25 @@ public class AutoBlue extends LinearOpMode{
         sleep(100);
         idle();
         shootBall();
-        encoderDrive(.75,-.75,400,400,3);
+        encoderDrive(.75,-.75,500,500,3);
         stopAll();
-        encoderDrive(.4,.4,3700,7600,10);
+        encoderDrive(.4,.4,3550,3550,10);
         encoderDrive(.18,.18,900,900,1.25);
-        encoderDrive(-.19,-.19,225,225,3);
-        encoderDrive(-.75,.75,400,400,3);
+        encoderDrive(-.19,-.19,125,125,3);
+        encoderDrive(-.75,.75,500,500,3);
         autoBeaconSlider.setPower(0);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist());
         sleep(500);
         doBeacon(false);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist());
         encoderDrive(-.4,-.4,1700,1700,5);
 //        balance();
         doBeacon(true);
-        encoderDrive(.5,-.5,100,100,2);
+        encoderDrive(.5,-.5,150,150,2);
         encoderDrive(-.5,-.5,1600,1600,5);
 
     }

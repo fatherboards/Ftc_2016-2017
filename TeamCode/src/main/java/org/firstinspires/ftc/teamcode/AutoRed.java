@@ -176,7 +176,7 @@ public class AutoRed extends LinearOpMode{
                 left(.21);
             }
             telemetry();
-            autoBeaconSlider.setPower(getPowerDist()-.2);
+            autoBeaconSlider.setPower(getPowerDist());
             idle();
         }
         stopAll();
@@ -310,32 +310,25 @@ public class AutoRed extends LinearOpMode{
             dist = cmFront;
         }
         double beaconDist = dist-4;
-        double pow = beaconDist*(1.5/18) - .5;
+        double pow = beaconDist*(.36/9);
         return pow;
     }
     public void doBeacon(boolean isReversed) throws InterruptedException{
         runtime.reset();
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals("red")) {
             if(isReversed){
-                forward(-.15);
+                forward(-.1);
             }
             else{
-                forward(.15);
+                forward(.1);
             }
-            autoBeaconSlider.setPower(getPowerDist()-.2);
+            autoBeaconSlider.setPower(getPowerDist()-.05);
             idle();
         }
         stopAll();
-        if(isReversed) {
-            encoderDrive(.15, .15, 150, 150, 5);
-        }
-        else{
-            encoderDrive(-.15, -.15, 100, 100, 5);
-        }
-        stopAll();
-        autoBeaconSlider.setPower(getPowerDist()+.3);
-        sleep(3500);
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist()+.4);
+        sleep(1000);
+        autoBeaconSlider.setPower(getPowerDist()-.05);
         sleep(650);
     }
 
@@ -370,16 +363,16 @@ public class AutoRed extends LinearOpMode{
 
 //        imuLeft(10,.35);
         encoderDrive(-.75,.75,400,400,3);
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist());
         sleep(500);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist());
 //        sleep(500);
         doBeacon(true);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.2);
+        autoBeaconSlider.setPower(getPowerDist());
         encoderDrive(.4,.4,1700,1700,5);
 //        balance();
         doBeacon(false);

@@ -266,7 +266,6 @@ public class LucasSwagHeheXd extends LinearOpMode{
         telemetry.update();
     }
     public void shootBall() throws InterruptedException{
-        MediaPlayer.create(FtcRobotControllerActivity.context, com.qualcomm.ftcrobotcontroller.R.raw.hamhorn).start();
         shooter.setPower(.75);
         sleep(1000);
         shooter.setPower(0);
@@ -313,17 +312,38 @@ public class LucasSwagHeheXd extends LinearOpMode{
             dist = cmFront;
         }
         double beaconDist = dist-4;
-        double pow = beaconDist*(1.27/18) - .27;
+        double pow = beaconDist*(.36/9);
         return pow;
     }
     public void doBeacon(boolean isReversed) throws InterruptedException{
         runtime.reset();
+        int mult = 1;
+        if(isReversed) mult = -1;
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals("blue")) {
-            if(isReversed){
-                forward(-.125);
+            double rFront = rangeSensorFront.getDistance(DistanceUnit.CM);
+            double rBack = rangeSensorBack.getDistance(DistanceUnit.CM);
+            if(rFront - rBack > 2){
+
+                leftFront.setPower(mult*.2);
+                leftBack.setPower(mult*.2);
+                rightFront.setPower(mult*.15);
+                rightBack.setPower(mult*.15);
+
+            }
+            else if(rBack - rFront > 2){
+
+                leftFront.setPower(mult*.15);
+                leftBack.setPower(mult*.15);
+                rightFront.setPower(mult*.2);
+                rightBack.setPower(mult*.2);
+
             }
             else{
-                forward(.125);
+                leftFront.setPower(mult*.15);
+                leftBack.setPower(mult*.15);
+                rightFront.setPower(mult*.15);
+                rightBack.setPower(mult*.15);
+
             }
             autoBeaconSlider.setPower(getPowerDist()-.3);
             idle();
@@ -344,8 +364,6 @@ public class LucasSwagHeheXd extends LinearOpMode{
     //Assuming first balance makes robot parallel to wall.
     public void LucasSwaggyWallFollow() throws InterruptedException{
     while(color.blue() < color.red()+2){
-
-
         if(rangeSensorFront.getDistance(DistanceUnit.CM) - rangeSensorBack.getDistance(DistanceUnit.CM) > 2){
 
             leftFront.setPower(.4);
@@ -372,12 +390,6 @@ public class LucasSwagHeheXd extends LinearOpMode{
     }
 
     }
-    public void AdjustArm() throws InterruptedException{
-        sleep(750);
-        double AvgDist = (rangeSensorBack.getDistance(DistanceUnit.CM) + rangeSensorFront.getDistance(DistanceUnit.CM))/2;
-
-
-    }
 
     public void runOpMode() throws InterruptedException{
         initialize();
@@ -386,36 +398,34 @@ public class LucasSwagHeheXd extends LinearOpMode{
             idle();
         }
         waitForStart();
-        encoderDrive(.3,.3,1400,1400,5);
+        encoderDrive(.3,.3,1500,1500,5);
         shootBall();
+        sleep(500);
         intake();
+        sleep(100);
+        idle();
         shootBall();
-        imuRight(50,.33);
-//        encoderDrive(.34,-.34,630,630,3);
+        encoderDrive(.75,-.75,400,400,3);
         stopAll();
         encoderDrive(.4,.4,3700,7600,10);
         encoderDrive(.18,.18,900,900,1.25);
         encoderDrive(-.19,-.19,225,225,3);
-//        encoderDrive(-.34,.34,630,630,3);
-        imuLeft(47,.33);
-        balance();
-        LucasSwaggyWallFollow();
-
-       /* autoBeaconSlider.setPower(0);
+        encoderDrive(-.75,.75,400,400,3);
+        autoBeaconSlider.setPower(0);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.30);
+        autoBeaconSlider.setPower(getPowerDist());
         sleep(500);
         doBeacon(false);
         idle();
         balance();
-        autoBeaconSlider.setPower(getPowerDist()-.3);
+        autoBeaconSlider.setPower(getPowerDist());
         encoderDrive(-.4,-.4,1700,1700,5);
 //        balance();
         doBeacon(true);
         encoderDrive(.5,-.5,100,100,2);
         encoderDrive(-.5,-.5,1600,1600,5);
-*/
+
     }
 
 
