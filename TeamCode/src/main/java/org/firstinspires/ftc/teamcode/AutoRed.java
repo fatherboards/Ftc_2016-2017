@@ -47,8 +47,8 @@ public class AutoRed extends FatherboardsLinearOpMode{
 //        sleep(500);
         doBeacon(true,"red");
         idle();
-        balance();
-        autoBeaconSlider.setPower(getPowerDist());
+//        balance();
+        autoBeaconSlider.setPower(0);
         encoderDrive(.4,.4,1700,1700,5);
 //        balance();
         doBeacon(false,"red");

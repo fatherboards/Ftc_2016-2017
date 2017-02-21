@@ -40,7 +40,6 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
     MasqAdafruitIMU imu;
 
     public void initialize(){
-        imu = new MasqAdafruitIMU("IMU", hardwareMap);
         color = hardwareMap.colorSensor.get("color");
         shooter = hardwareMap.dcMotor.get("shooter");
         leftFront = hardwareMap.dcMotor.get("leftFront");
@@ -137,21 +136,23 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
 
     public void balance() throws InterruptedException {
         runtime.reset();
-        while (Math.abs(rangeSensorFront.getDistance(DistanceUnit.CM) - rangeSensorBack.getDistance(DistanceUnit.CM)) > 1 && opModeIsActive() && runtime.seconds() < 3){
-            double cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
-            double cmFront = rangeSensorFront.getDistance(DistanceUnit.CM);
+        double cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
+        double cmFront = rangeSensorFront.getDistance(DistanceUnit.CM);
+        while (Math.abs(cmBack - cmFront) > 2 && opModeIsActive() && runtime.seconds() < 5){
+            cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
+            cmFront = rangeSensorFront.getDistance(DistanceUnit.CM);
             if(cmBack==255 || cmFront ==255) {
                 stopAll();
+                idle();
                 continue;
             }
             if (cmFront > cmBack) {
-                right(.22);
+                right(.24);
             }
-            if (rangeSensorFront.getDistance(DistanceUnit.CM) < rangeSensorBack.getDistance(DistanceUnit.CM)) {
+            if (cmBack > cmFront) {
                 left(.24);
             }
             telemetry();
-            autoBeaconSlider.setPower(getPowerDist());
             idle();
         }
         stopAll();
@@ -173,18 +174,18 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
             while (opModeIsActive() && (runtime.seconds() < timeoutS)) {
                 telemetry();
                 if(Math.abs(leftFront.getCurrentPosition()) > Math.abs(leftCounts)*(7.0/8) || Math.abs(leftBack.getCurrentPosition()) > Math.abs(leftCounts)*(7.0/8) || Math.abs(rightFront.getCurrentPosition()) > Math.abs(rightCounts)*(7.0/8) || Math.abs(rightBack.getCurrentPosition()) > Math.abs(rightCounts)*(7.0/8)) {
-                    leftFront.setPower(.25*leftSpeed);
-                    rightFront.setPower(.25*rightSpeed);
-                    leftBack.setPower(.25*leftSpeed);
-                    rightBack.setPower(.25*rightSpeed);
+                    leftFront.setPower(.5*leftSpeed);
+                    rightFront.setPower(.5*rightSpeed);
+                    leftBack.setPower(.5*leftSpeed);
+                    rightBack.setPower(.5*rightSpeed);
                     telemetry.addData("speed",.5);
                 }
-                if(Math.abs(leftFront.getCurrentPosition()) > Math.abs(leftCounts)*(.5) || Math.abs(leftBack.getCurrentPosition()) > Math.abs(leftCounts)*(.5) || Math.abs(rightFront.getCurrentPosition()) > Math.abs(rightCounts)*(.5) || Math.abs(rightBack.getCurrentPosition()) > Math.abs(rightCounts)*(.5)) {
-                    leftFront.setPower(.4*leftSpeed);
-                    rightFront.setPower(.4*rightSpeed);
-                    leftBack.setPower(.4*leftSpeed);
-                    rightBack.setPower(.4*rightSpeed);
-                    telemetry.addData("speed",.5);
+                else if(Math.abs(leftFront.getCurrentPosition()) > Math.abs(leftCounts)*(.5) || Math.abs(leftBack.getCurrentPosition()) > Math.abs(leftCounts)*(.5) || Math.abs(rightFront.getCurrentPosition()) > Math.abs(rightCounts)*(.5) || Math.abs(rightBack.getCurrentPosition()) > Math.abs(rightCounts)*(.5)) {
+                    leftFront.setPower(.75*leftSpeed);
+                    rightFront.setPower(.75*rightSpeed);
+                    leftBack.setPower(.75*leftSpeed);
+                    rightBack.setPower(.75*rightSpeed);
+                    telemetry.addData("speed",.75);
                 }
                 else {
                     telemetry.addData("speed",1);
@@ -225,7 +226,7 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         pickpMechanism.setPower(0);
     }
     public void telemetry(){
-        telemetry.addData(imu.getName(), imu.telemetrize());
+
         try {
             telemetry.addData("color", getColor(color));
         }catch(InterruptedException e){}
@@ -295,33 +296,39 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals(colorStr)) {
             double rFront = rangeSensorFront.getDistance(DistanceUnit.CM);
             double rBack = rangeSensorBack.getDistance(DistanceUnit.CM);
-            if(rFront - rBack > 2){
+            if(rFront - rBack > 1){
 
-                leftFront.setPower(mult*.15);
-                leftBack.setPower(mult*.15);
-                rightFront.setPower(mult*.11);
-                rightBack.setPower(mult*.11);
-
-            }
-            else if(rBack - rFront > 2){
-
-                leftFront.setPower(mult*.11);
-                leftBack.setPower(mult*.11);
+                leftFront.setPower(mult*.2);
+                leftBack.setPower(mult*.2);
                 rightFront.setPower(mult*.15);
                 rightBack.setPower(mult*.15);
 
             }
+            else if(rBack - rFront > 1){
+
+                leftFront.setPower(mult*.15);
+                leftBack.setPower(mult*.15);
+                rightFront.setPower(mult*.2);
+                rightBack.setPower(mult*.2);
+
+            }
             else{
-                leftFront.setPower(mult*.11);
-                leftBack.setPower(mult*.11);
-                rightFront.setPower(mult*.11);
-                rightBack.setPower(mult*.11);
+                leftFront.setPower(mult*.15);
+                leftBack.setPower(mult*.15);
+                rightFront.setPower(mult*.15);
+                rightBack.setPower(mult*.15);
 
             }
             autoBeaconSlider.setPower(getPowerDist()-.05);
             idle();
         }
         stopAll();
+        if(isReversed) {
+            encoderDrive(.4,.4,55,55,1);
+        }
+        else {
+            encoderDrive(-.4,-.4,35,35,1);
+        }
         autoBeaconSlider.setPower(getPowerDist()+.4);
         sleep(1500);
         autoBeaconSlider.setPower(getPowerDist()-.05);

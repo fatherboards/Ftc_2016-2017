@@ -34,8 +34,8 @@ public class AutoBlue extends FatherboardsLinearOpMode{
         sleep(500);
         doBeacon(false,"blue");
         idle();
-        balance();
-        autoBeaconSlider.setPower(getPowerDist());
+//        balance();
+        autoBeaconSlider.setPower(0);
         encoderDrive(-.4,-.4,1700,1700,5);
 //        balance();
         doBeacon(true,"blue");

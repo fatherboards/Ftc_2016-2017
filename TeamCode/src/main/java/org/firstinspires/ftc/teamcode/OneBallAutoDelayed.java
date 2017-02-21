@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 /**
- * Created by wross on 12/16/16.
+ * Created by zipper on 2/9/17.
  */
-@Autonomous(name="One Ball Center", group = "Ball Autonomous")
-public class OneBallAuto extends FatherboardsLinearOpMode{
+@Autonomous(name="One Ball Center Delayed", group = "Ball Autonomous")
+public class OneBallAutoDelayed extends FatherboardsLinearOpMode{
     ElapsedTime autoRunTime = new ElapsedTime();
     public void runOpMode() throws InterruptedException{
         initialize();
@@ -24,6 +16,7 @@ public class OneBallAuto extends FatherboardsLinearOpMode{
             idle();
         }
         autoRunTime.reset();
+        sleep(10000);
         encoderDrive(.3, .3, 2100, 2100, 10);
         shootBall();
         while(autoRunTime.seconds() < 26) {
@@ -33,6 +26,4 @@ public class OneBallAuto extends FatherboardsLinearOpMode{
         }
         encoderDrive(.3, .3, 1200, 1200, 10);
     }
-
-
 }

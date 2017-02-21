@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by zipper on 2/3/17.
  */
 @TeleOp
-public class VariableExtensionTest extends LinearOpMode {
+public class VariableExtensionDemo extends LinearOpMode {
     private CRServo autoBeaconSlider;
     OurRangeSensor rangeSensorFront;
     OurRangeSensor rangeSensorBack;
