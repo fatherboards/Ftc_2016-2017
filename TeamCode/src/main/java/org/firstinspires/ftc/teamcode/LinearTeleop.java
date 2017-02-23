@@ -43,8 +43,7 @@ public class LinearTeleop extends LinearOpMode{
             pickpMechanism.setPower(1);
         }
         else{
-            pickpMechanism.setPower(-1);
-            sleep(150);
+            sleep(200);
             pickpMechanism.setPower(0);
             shootBall();
         }
@@ -52,7 +51,7 @@ public class LinearTeleop extends LinearOpMode{
 
     public void shootBall() throws InterruptedException{
         runtime.reset();
-        while(opModeIsActive() && runtime.seconds() < 1) {
+        while(opModeIsActive() && runtime.seconds() < .75) {
             sleep(75);
             shooter.setPower(.75);
             leftFront.setPower(gamepad1.left_stick_y*multiplier);
@@ -65,7 +64,7 @@ public class LinearTeleop extends LinearOpMode{
     }
 
     public boolean isInMacro(){
-        return ballCheck.getLightDetected() > .014;
+        return ballCheck.getLightDetected() > .015;
     }
 
     public boolean intake() throws InterruptedException{
