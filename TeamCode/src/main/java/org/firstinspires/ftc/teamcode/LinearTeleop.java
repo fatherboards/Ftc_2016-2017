@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-
 /**
  * Created by wyatt.ross on 1/25/2017.
+ *
+ * Our teleop code for velocity vortex
  */
 @TeleOp
 public class LinearTeleop extends LinearOpMode{
@@ -31,6 +29,11 @@ public class LinearTeleop extends LinearOpMode{
     private double BEACONSPEED = .15;
     private double multiplier = NORMALSPEED;
 
+    /**
+     * Telemetry helper for ball being in or not
+     * @return
+     * String explaining if ball is in or not
+     */
     public String isIn(){
         if(ballCheck.getLightDetected() > .014){
             return "YEEEEEE :^)";
@@ -38,6 +41,13 @@ public class LinearTeleop extends LinearOpMode{
         return "nah";
     }
 
+    /**
+     * Enabled by a left trigger, disabled by right trigger.
+     * Once aligned at the vortex, this is a super efficient way for us to empty our balls into the vortex.
+     * It intakes until a ball isInMacro(), then shoots.
+     * Repeat
+     * @throws InterruptedException
+     */
     public void ShootMode()throws InterruptedException{
         if(!isInMacro()) {
             pickpMechanism.setPower(1);
@@ -50,6 +60,10 @@ public class LinearTeleop extends LinearOpMode{
         }
     }
 
+    /**
+     * Shoots one ball, but also allows us to move while shooting
+     * @throws InterruptedException
+     */
     public void shootBall() throws InterruptedException{
         runtime.reset();
         while(opModeIsActive() && runtime.seconds() < 1) {
@@ -64,10 +78,19 @@ public class LinearTeleop extends LinearOpMode{
         shooter.setPower(0);
     }
 
+    /**
+     * Less bulky version of isIn()
+     * @return
+     * true if in, false if out
+     */
     public boolean isInMacro(){
         return ballCheck.getLightDetected() > .014;
     }
 
+    /**
+     * Intake until a ball isInMacro()
+     * @throws InterruptedException
+     */
     public boolean intake() throws InterruptedException{
         pickpMechanism.setPower(1);
         runtime.reset();

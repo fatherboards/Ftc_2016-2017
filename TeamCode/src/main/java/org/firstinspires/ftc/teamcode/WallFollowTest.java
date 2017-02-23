@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.media.MediaPlayer;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
@@ -15,14 +13,13 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by wross on 12/16/16.
  */
-@Autonomous(name = "hehe xd", group="Beacon Autonomous")
-public class LucasSwagHeheXd extends LinearOpMode{
+@Autonomous(name = "lucas hehe XD", group="Beacon Autonomous")
+public class WallFollowTest extends LinearOpMode{
     private DcMotor leftBack;
     private DcMotor leftFront;
     private DcMotor pickpMechanism;
@@ -35,8 +32,8 @@ public class LucasSwagHeheXd extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
     ColorSensor color;
 
-    OurRangeSensor rangeSensorFront;
-    OurRangeSensor rangeSensorBack;
+    FatherboardsRangeSensor rangeSensorFront;
+    FatherboardsRangeSensor rangeSensorBack;
     I2cDeviceSynch rangeSensorReaderBack;
     I2cDevice rangeSensorBackDevice;
 
@@ -71,8 +68,8 @@ public class LucasSwagHeheXd extends LinearOpMode{
         rangeSensorReaderBack = new I2cDeviceSynchImpl(rangeSensorBackDevice, I2cAddr.create8bit(0x38), false);
         rangeSensorFrontDevice = hardwareMap.i2cDevice.get("rangeSensorFront");
         rangeSensorReaderFront = new I2cDeviceSynchImpl(rangeSensorFrontDevice, I2cAddr.create8bit(0x28), false);
-        rangeSensorBack = new OurRangeSensor(rangeSensorReaderBack,I2cAddr.create8bit(0x38));
-        rangeSensorFront = new OurRangeSensor(rangeSensorReaderFront, I2cAddr.create8bit(0x28));
+        rangeSensorBack = new FatherboardsRangeSensor(rangeSensorReaderBack,I2cAddr.create8bit(0x38));
+        rangeSensorFront = new FatherboardsRangeSensor(rangeSensorReaderFront, I2cAddr.create8bit(0x28));
         telemetry.addData("Initialization ", "complete");
         telemetry.update();
     }

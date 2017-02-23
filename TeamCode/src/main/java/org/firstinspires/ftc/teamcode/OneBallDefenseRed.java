@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by wross on 12/16/16.
+ * @deprecated
+ * An attempt at creating a defensive auto.
  */
 @Autonomous(name="One Ball Defense Red", group = "Ball Autonomous")
 public class OneBallDefenseRed extends FatherboardsLinearOpMode{

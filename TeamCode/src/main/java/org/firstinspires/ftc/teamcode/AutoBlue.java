@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 /**
  * Created by wross on 12/16/16.
+ *
+ * Blue 2 beacon auto. Also scores two balls in the beginning, and parks on the corner vortex in the end.
  */
 @Autonomous(name = "Blue 2 Beacon", group="Beacon Autonomous")
 public class AutoBlue extends FatherboardsLinearOpMode{

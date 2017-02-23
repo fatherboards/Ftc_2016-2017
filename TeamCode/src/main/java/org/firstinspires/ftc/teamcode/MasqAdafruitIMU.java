@@ -39,6 +39,9 @@ public class MasqAdafruitIMU {
 
 
     /**
+     * Masquerade's lovely algorithm for turning IMU data into good data
+     *
+     * @return
      * This method returns a 3x1 array of doubles with the yaw, pitch, and roll in that order.
      * The equations used in this method came from:
      * https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Euler_Angles_from_Quaternion

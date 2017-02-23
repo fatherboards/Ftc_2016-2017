@@ -2,17 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by wross on 12/16/16.
+ *
+ * Auto opmode that scores one ball in autonomous, then hits the ball and parks in the last 4 seconds.
  */
 @Autonomous(name="One Ball Center", group = "Ball Autonomous")
 public class OneBallAuto extends FatherboardsLinearOpMode{

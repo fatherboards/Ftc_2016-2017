@@ -15,30 +15,40 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * Created by zipper on 2/4/17.
+ *
+ * Abstract class that contains the bulk of our code for the velocity vortex challenge.
+ * All of the helper methods for our auto opmodes and teleop opmodes are neatly kept here.
  */
 
 public abstract class FatherboardsLinearOpMode extends LinearOpMode {
-    protected DcMotor leftBack;
-    protected DcMotor leftFront;
-    protected DcMotor pickpMechanism;
-    protected DcMotor rightBack;
-    protected DcMotor rightFront;
-    protected DcMotor shooter;
+
+    private DcMotor leftBack;
+    private DcMotor leftFront;
+    private DcMotor pickpMechanism;
+    private DcMotor rightBack;
+    private DcMotor rightFront;
+    private DcMotor shooter;
     protected CRServo autoBeaconSlider;
-    protected CRServo slider;
-    protected OpticalDistanceSensor ballCheck;
-    protected ElapsedTime runtime = new ElapsedTime();
-    ColorSensor color;
+    private CRServo slider;
+    private OpticalDistanceSensor ballCheck;
+    private ElapsedTime runtime = new ElapsedTime();
+    private ColorSensor color;
 
-    OurRangeSensor rangeSensorFront;
-    OurRangeSensor rangeSensorBack;
-    I2cDeviceSynch rangeSensorReaderBack;
-    I2cDevice rangeSensorBackDevice;
+    private FatherboardsRangeSensor rangeSensorFront;
+    private FatherboardsRangeSensor rangeSensorBack;
+    private I2cDeviceSynch rangeSensorReaderBack;
+    private I2cDevice rangeSensorBackDevice;
 
-    I2cDeviceSynch rangeSensorReaderFront;
-    I2cDevice rangeSensorFrontDevice;
-    MasqAdafruitIMU imu;
+    private I2cDeviceSynch rangeSensorReaderFront;
+    private I2cDevice rangeSensorFrontDevice;
+    private MasqAdafruitIMU imu;
 
+    /**
+     * Initializes all necessary components including
+     * Motors
+     * Sensors
+     * Servos
+     */
     public void initialize(){
         color = hardwareMap.colorSensor.get("color");
         shooter = hardwareMap.dcMotor.get("shooter");
@@ -64,11 +74,19 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         rangeSensorReaderBack = new I2cDeviceSynchImpl(rangeSensorBackDevice, I2cAddr.create8bit(0x38), false);
         rangeSensorFrontDevice = hardwareMap.i2cDevice.get("rangeSensorFront");
         rangeSensorReaderFront = new I2cDeviceSynchImpl(rangeSensorFrontDevice, I2cAddr.create8bit(0x28), false);
-        rangeSensorBack = new OurRangeSensor(rangeSensorReaderBack,I2cAddr.create8bit(0x38));
-        rangeSensorFront = new OurRangeSensor(rangeSensorReaderFront, I2cAddr.create8bit(0x28));
+        rangeSensorBack = new FatherboardsRangeSensor(rangeSensorReaderBack,I2cAddr.create8bit(0x38));
+        rangeSensorFront = new FatherboardsRangeSensor(rangeSensorReaderFront, I2cAddr.create8bit(0x28));
         telemetry.addData("Initialization ", "complete");
         telemetry.update();
     }
+
+    /**
+     * Turn right using the IMU
+     * @param degs
+     * Turn this amount of degrees
+     * @param speed
+     * Turn at this speed
+     */
     public void imuRight(int degs, double speed){
         double[] angles = imu.getAngles();
         double yaw = angles[0];
@@ -88,6 +106,13 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         }
     }
 
+    /**
+     * Turn left using the IMU
+     * @param degs
+     * Turn this amount of degrees
+     * @param speed
+     * Turn at this speed
+     */
     public void imuLeft(int degs, double speed){
         double[] angles = imu.getAngles();
         double yaw = angles[0];
@@ -106,6 +131,15 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
             rightBack.setPower(speed);
         }
     }
+
+    /**
+     * Get the color the colorsensor sees
+     * @param colorSensor
+     * color sensor to read
+     * @return
+     * Returns a string of the color seen, blue, red, or other
+     * @throws InterruptedException
+     */
     public String getColor(ColorSensor colorSensor) throws InterruptedException {
         if(colorSensor.blue() > colorSensor.red()+2) {
             return "blue";
@@ -118,6 +152,12 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         }
     }
 
+    /**
+     * Turn left indefinitely
+     * @param power
+     * Turn at this power
+     * @throws InterruptedException
+     */
     public void left(double power) throws InterruptedException {
         telemetry();
         leftFront.setPower(-power);
@@ -126,6 +166,12 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         rightBack.setPower(power);
     }
 
+    /**
+     * Turn right indefinitely
+     * @param power
+     * Turn at this power
+     * @throws InterruptedException
+     */
     public void right(double power) throws InterruptedException {
         telemetry();
         leftFront.setPower(power);
@@ -134,6 +180,14 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         rightBack.setPower(-power);
     }
 
+    /**
+     * This function uses two range sensors to make our robot parallel to the wall.
+     * To  do so, it takes the distances from the wall on both sensors, and compensates by turning until the distances are the same.
+     * One special part of this function is that we filter out bad values.
+     * An inherent error of having two range sensors, is that the ultrasonic pulses from one sensor will interfere with the readings of the other sensor at times.
+     * With that being said, with a lot of work, we were able to filter out the garbage value the sensor would return on a bad read, and have a very robust function.
+     * @throws InterruptedException
+     */
     public void balance() throws InterruptedException {
         runtime.reset();
         double cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
@@ -157,6 +211,21 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         }
         stopAll();
     }
+
+    /**
+     * Drive based on encoder ticks
+     * @param leftSpeed
+     * Speed for left motors
+     * @param rightSpeed
+     * Speed for right motors
+     * @param leftCounts
+     * Ticks for left encoders
+     * @param rightCounts
+     * Ticks for right encoders
+     * @param timeoutS
+     * Timeout seconds
+     * @throws InterruptedException
+     */
     public void encoderDrive(double leftSpeed, double rightSpeed, double leftCounts, double rightCounts, double timeoutS) throws InterruptedException {
         zeroEncoders();
 
@@ -205,6 +274,10 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
             //sleep(250);   // optional pause after each move
         }
     }
+
+    /**
+     * Zeroes encoders and resets them
+     */
     public void zeroEncoders() {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -216,6 +289,11 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    /**
+     * Stops all motors
+     * @throws InterruptedException
+     */
     public void stopAll() throws InterruptedException{
         telemetry();
         leftFront.setPower(0);
@@ -225,6 +303,10 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         shooter.setPower(0);
         pickpMechanism.setPower(0);
     }
+
+    /**
+     * Telemetries all debugging information
+     */
     public void telemetry(){
 
         try {
@@ -239,14 +321,31 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         telemetry.addData("ods", ballCheck.getLightDetected());
         telemetry.update();
     }
+
+    /**
+     * Shoots one ball
+     * @throws InterruptedException
+     */
     public void shootBall() throws InterruptedException{
         shooter.setPower(1);
         sleep(1000);
         shooter.setPower(0);
     }
+
+    /**
+     * Helps us tell when a ball is in the launcher
+     * @return
+     * Returns whether the ball is in or not
+     */
     public boolean isIn(){
         return ballCheck.getLightDetected() > .014;
     }
+
+    /**
+     * Intake until the ball is in
+     * @throws InterruptedException
+     *
+     */
     public boolean intake() throws InterruptedException{
         pickpMechanism.setPower(1);
         runtime.reset();
@@ -254,6 +353,13 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         pickpMechanism.setPower(0);
         return true;
     }
+
+    /**
+     * Go forward indefinitely
+     * @param power
+     * Drive at this power
+     * @throws InterruptedException
+     */
     public void forward(double power) throws InterruptedException{
         telemetry();
         leftFront.setPower(power);
@@ -261,6 +367,15 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         rightFront.setPower(power);
         rightBack.setPower(power);
     }
+
+    /**
+     * Converts the average distance of the range sensors (filtering bad values) into a usable servo power that will put our rack and pinion pusher right in front of the beacon.
+     * Uses a linear function that converts the distance from the wall to distance from beacon, then scales it using a slope to determine power.
+     * Yay math!!!!
+     * @return
+     * Returns the power for the servo
+     * @throws InterruptedException
+     */
     public double getPowerDist() throws InterruptedException{
         double cmBack;
         double cmFront;
@@ -289,6 +404,16 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         double pow = beaconDist*(.36/9);
         return pow;
     }
+
+    /**
+     * Once parallel to the wall, the robot goes forward or backwards based on the boolean isReversed, and waits until it sees the color provided in colorStr.
+     * It then pushes the button for the right color.
+     * @param isReversed
+     * Flag for whether the robot is going backwards or forwards
+     * @param colorStr
+     * Color to look for
+     * @throws InterruptedException
+     */
     public void doBeacon(boolean isReversed,String colorStr) throws InterruptedException{
         int mult = 1;
         if(isReversed) mult = -1;

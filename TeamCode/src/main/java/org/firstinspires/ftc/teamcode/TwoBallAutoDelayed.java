@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Created by zipper on 2/9/17.
+ *
+ * Auto opmode that waits 10 seconds, scores two balls in autonomous, then hits the ball and parks in the last 4 seconds.
  */
 @Autonomous(name="Two Ball Center Delayed", group = "Ball Autonomous")
 public class TwoBallAutoDelayed extends FatherboardsLinearOpMode {
