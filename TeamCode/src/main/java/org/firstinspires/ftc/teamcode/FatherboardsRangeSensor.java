@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cAddrConfig;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
 
 /**
  * Created by Jacob Allen Zipper. Master Programmer and bug hunter.
@@ -16,7 +15,7 @@ import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
  *
  * @see <a href="http://www.modernroboticsinc.com/range-sensor">MR Range Sensor</a>
  */
-@I2cSensor(name = "Our Range Sensor", description = "a MR range sensor", xmlTag = "FatherboardsRangeSensor")
+//@I2cSensor(name = "Our Range Sensor", description = "a MR range sensor", xmlTag = "FatherboardsRangeSensor")
 public class FatherboardsRangeSensor extends ModernRoboticsI2cRangeSensor implements DistanceSensor, OpticalDistanceSensor, I2cAddrConfig
 {
     /**

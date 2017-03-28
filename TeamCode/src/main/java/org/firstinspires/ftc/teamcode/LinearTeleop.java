@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
@@ -12,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Our teleop code for velocity vortex
  */
-@TeleOp
+//@TeleOp
 public class LinearTeleop extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
     private boolean isShooting = false;

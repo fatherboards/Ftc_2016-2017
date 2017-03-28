@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -10,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Auto opmode that scores one ball in autonomous, then hits the ball and parks in the last 4 seconds.
  */
-@Autonomous(name="One Ball Center", group = "Ball Autonomous")
+//@Autonomous(name="One Ball Center", group = "Ball Autonomous")
 public class OneBallAuto extends FatherboardsLinearOpMode{
     ElapsedTime autoRunTime = new ElapsedTime();
     public void runOpMode() throws InterruptedException{

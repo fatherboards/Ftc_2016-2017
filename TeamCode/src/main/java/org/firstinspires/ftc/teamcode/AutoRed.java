@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 /**
  * Created by wross on 12/16/16.
  *
  * Red 2 beacon auto. Also scores two balls in the beginning, and parks on the corner vortex in the end.
  */
-@Autonomous(name="Red 2 Beacon", group="Beacon Autonomous")
+//@Autonomous(name="Red 2 Beacon", group="Beacon Autonomous")
 public class AutoRed extends FatherboardsLinearOpMode{
 
 
@@ -30,27 +29,23 @@ public class AutoRed extends FatherboardsLinearOpMode{
 //        imuLeft(40,.35);
         encoderDrive(-.75,.75,400,400,3);
         stopAll();
-        encoderDrive(.4,.4,3800,3800,10);
-        encoderDrive(-.75,.75,1100,1100,3);
+        encoderDrive(.4,.4,3500,3500,10);
+        encoderDrive(-.75,.75,700,700,3);
 //        imuLeft(70,.35);
         idle();
         sleep(100);
-        encoderDrive(.14,.14,234234,234234,1.5);
-        encoderDrive(-.19,-.19,100,100,3);
+        encoderDrive(.18,.18,234234,234234,1.5);
+        encoderDrive(-.19,-.19,170,170,3);
         autoBeaconSlider.setPower(0);
 
 //        imuLeft(10,.35);
         encoderDrive(-.75,.75,500,500,3);
-        autoBeaconSlider.setPower(getPowerDist());
-        sleep(500);
-        idle();
         balance();
         autoBeaconSlider.setPower(getPowerDist());
-//        sleep(500);
+        sleep(500);
         doBeacon(true,"red");
         idle();
-//        balance();
-        autoBeaconSlider.setPower(0);
+        balance();
         encoderDrive(.4,.4,1700,1700,5);
 //        balance();
         doBeacon(false,"red");

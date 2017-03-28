@@ -60,7 +60,7 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         pickpMechanism = hardwareMap.dcMotor.get("pickupMechanism");
         slider = hardwareMap.crservo.get("autoBeaconSlider");
         ballCheck = hardwareMap.opticalDistanceSensor.get("ballODS");
-        autoBeaconSlider.setPower(0.16);
+        autoBeaconSlider.setPower(0.1);
 
 
         rightBack.setDirection(DcMotor.Direction.REVERSE);
@@ -192,7 +192,7 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         runtime.reset();
         double cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
         double cmFront = rangeSensorFront.getDistance(DistanceUnit.CM);
-        while (Math.abs(cmBack - cmFront) > 2 && opModeIsActive() && runtime.seconds() < 8){
+        while (Math.abs(cmBack - cmFront) > 2 && opModeIsActive() && runtime.seconds() < 5){
             cmBack = rangeSensorBack.getDistance(DistanceUnit.CM);
             cmFront = rangeSensorFront.getDistance(DistanceUnit.CM);
             if(cmBack==255 || cmFront ==255) {
@@ -423,8 +423,8 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
             double rBack = rangeSensorBack.getDistance(DistanceUnit.CM);
             if(rFront - rBack > 1){
 
-                leftFront.setPower(mult*.2);
-                leftBack.setPower(mult*.2);
+                leftFront.setPower(mult*.25);
+                leftBack.setPower(mult*.25);
                 rightFront.setPower(mult*.15);
                 rightBack.setPower(mult*.15);
 
@@ -433,8 +433,8 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
 
                 leftFront.setPower(mult*.15);
                 leftBack.setPower(mult*.15);
-                rightFront.setPower(mult*.2);
-                rightBack.setPower(mult*.2);
+                rightFront.setPower(mult*.25);
+                rightBack.setPower(mult*.25);
 
             }
             else{
@@ -449,16 +449,16 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         }
         stopAll();
         if(isReversed) {
-            encoderDrive(.15,.15,80,80,2);
+            encoderDrive(.15,.15,120,120,2);
             //beaconCorrection(!isReversed,colorStr);
         }
         else {
             encoderDrive(-.15,-.15,80,80,2);
             //beaconCorrection(!isReversed,colorStr);
         }
-        autoBeaconSlider.setPower(getPowerDist()+.4);
+        autoBeaconSlider.setPower(getPowerDist() + .4);
         sleep(1500);
-        autoBeaconSlider.setPower(getPowerDist()-.05);
+        autoBeaconSlider.setPower(getPowerDist() - .05);
         sleep(650);
     }
 
@@ -468,42 +468,21 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         if(isReversed) mult = -1;
         runtime.reset();
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals("other")) {
-            double rFront = rangeSensorFront.getDistance(DistanceUnit.CM);
-            double rBack = rangeSensorBack.getDistance(DistanceUnit.CM);
-            if(rFront - rBack > 1){
-
-                leftFront.setPower(mult*.2);
-                leftBack.setPower(mult*.2);
-                rightFront.setPower(mult*.15);
-                rightBack.setPower(mult*.15);
-
-            }
-            else if(rBack - rFront > 1){
-
-                leftFront.setPower(mult*.15);
-                leftBack.setPower(mult*.15);
-                rightFront.setPower(mult*.2);
-                rightBack.setPower(mult*.2);
-
-            }
-            else{
-                leftFront.setPower(mult*.15);
-                leftBack.setPower(mult*.15);
-                rightFront.setPower(mult*.15);
-                rightBack.setPower(mult*.15);
-
-            }
-            autoBeaconSlider.setPower(getPowerDist()-.05);
+            leftFront.setPower(mult*.17);
+            leftBack.setPower(mult*.17);
+            rightFront.setPower(mult*.17);
+            rightBack.setPower(mult*.17);
+            autoBeaconSlider.setPower(getPowerDist()-.1);
             idle();
         }
         stopAll();
         if(isReversed) {
-            encoderDrive(.15,.15,50,50,2);
-            //beaconCorrection(!isReversed,colorStr);
+//            encoderDrive(.15,.15,120,120,2);
+            beaconCorrection(!isReversed,colorStr);
         }
         else {
-            encoderDrive(-.15,-.15,50,50,2);
-            //beaconCorrection(!isReversed,colorStr);
+//            encoderDrive(-.15,-.15,80,80,2);
+            beaconCorrection(!isReversed,colorStr);
         }
         autoBeaconSlider.setPower(getPowerDist()+.4);
         sleep(1500);
@@ -519,39 +498,18 @@ public abstract class FatherboardsLinearOpMode extends LinearOpMode {
         beaconTeleop(false, "woo");
     }
 
-    /*public void beaconCorrection(boolean isReversed,String colorStr) throws InterruptedException{
+    public void beaconCorrection(boolean isReversed,String colorStr) throws InterruptedException{
         int mult = 1;
         if(isReversed) mult = -1;
         runtime.reset();
         while(opModeIsActive() && runtime.seconds() < 5 && !getColor(color).equals(colorStr)) {
-            double rFront = rangeSensorFront.getDistance(DistanceUnit.CM);
-            double rBack = rangeSensorBack.getDistance(DistanceUnit.CM);
-            if(rFront - rBack > 1){
-
-                leftFront.setPower(mult*.15);
-                leftBack.setPower(mult*.25);
-                rightFront.setPower(mult*.1);
-                rightBack.setPower(mult*.1);
-
-            }
-            else if(rBack - rFront > 1){
-
-                leftFront.setPower(mult*.1);
-                leftBack.setPower(mult*.1);
-                rightFront.setPower(mult*.15);
-                rightBack.setPower(mult*.15);
-
-            }
-            else{
-                leftFront.setPower(mult*.1);
-                leftBack.setPower(mult*.1);
-                rightFront.setPower(mult*.1);
-                rightBack.setPower(mult*.1);
-
-            }
+            leftFront.setPower(mult*.12);
+            leftBack.setPower(mult*.12);
+            rightFront.setPower(mult*.12);
+            rightBack.setPower(mult*.12);
             autoBeaconSlider.setPower(getPowerDist()-.05);
             idle();
         }
         stopAll();
-    }*/
+    }
 }

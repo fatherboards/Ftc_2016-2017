@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -9,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  * Auto opmode that scores two balls in autonomous, then hits the ball and parks in the last 4 seconds.
  */
-@Autonomous(name="Two Ball Center", group = "Ball Autonomous")
+//@Autonomous(name="Two Ball Center", group = "Ball Autonomous")
 public class TwoBallAuto extends FatherboardsLinearOpMode{
     ElapsedTime autoRunTime = new ElapsedTime();
     public void runOpMode() throws InterruptedException{

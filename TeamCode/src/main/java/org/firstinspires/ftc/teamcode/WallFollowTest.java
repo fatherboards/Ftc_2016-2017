@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 /**
  * Created by wross on 12/16/16.
  */
-@Autonomous(name = "lucas hehe XD", group="Beacon Autonomous")
+//@Autonomous(name = "lucas hehe XD", group="Beacon Autonomous")
 public class WallFollowTest extends LinearOpMode{
     private DcMotor leftBack;
     private DcMotor leftFront;
